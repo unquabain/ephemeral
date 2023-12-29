@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Ephemeral</title>
+<style type="text/css">
+* {
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 10pt;
+}
+.hidden {
+  display: none;
+}
+body {
+  background-color: #EEEEEE;
+}
+#container {
+  max-width: 900px;
+  margin: auto;
+}
+h1 {
+  font-size: large;
+  margin-top: 1ex;
+  margin-bottom: 1ex;
+  margin-left: 13px;
+  text-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+}
+#iface {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+  padding: 13px;
+  display: flex;
+}
+#menu {
+  min-width: 10%;
+  display: flex-row;
+}
+#menu .protocol {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 1em;
+  padding-right: 1em;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+  background-color: white;
+  font-weight: bold;
+}
+#menu .protocol:hover {
+  box-shadow: 0 5px 5px #BBBBBB, 0 10px 20px #EEEEEE;
+  color: #444444;
+}
+#menu .protocol:active {
+  box-shadow: 0 0 20px #EEEEEE;
+  background-color: #EEFFEE;
+}
+#form {
+  display: flex-row;
+  margin-left: 5%;
+  border: 1px solid #444444;
+  border-radius: 10px;
+  padding: 13px;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+}
+label {
+  font-weight: bold;
+  margin-top: 2ex;
+  display: block;
+}
+textarea {
+  width: calc(100% - 16px);
+  padding: 8px;
+  font-family: monospace;
+}
+button {
+  padding: 1ex 1em;
+  background-color: #3F51B5;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+  margin-top: 2ex;
+}
+button:hover {
+  box-shadow: 0 5px 5px #BBBBBB, 0 10px 20px #EEEEEE;
+  background-color: #03A9F4;
+}
+button:active {
+  box-shadow: 0 0 20px #EEEEEE;
+  background-color: #03A9F4;
+}
+.response {
+  font-size: small;
+  border: 1px solid #BBBBBB;
+  border-radius: 5px;
+  padding: 8px;
+  margin-top: 2ex;
+}
+pre {
+  margin-top: 2ex;
+  margin-bottom: 2ex;
+  padding: 2ex;
+  width: calc(100% - 4ex);
+  background-color: #EEEEEE;
+  color: #444444;
+  font-family: monospace;
+}
+.response-buttons a {
+  font-size: smaller;
+  color: #3F51B5;
+}
+.response-buttons a:visited {
+  font-size: smaller;
+  color: #3F51B5;
+}
+.response-buttons a:active {
+  font-size: smaller;
+  color: #3F51B5;
+}
+.response-buttons a:hover {
+  font-size: smaller;
+  color: #03A9F4;
+}
+
+</style>
+  </head>
+  <body>
+    <div id="container">
+      <h1 id="title">Ephemeral</h1>
+      <div id="iface">
+        <div id="menu">
+          <div class="protocol" id="request" onclick="setMode('request')">Request</div>
+          <div class="protocol" id="respond" onclick="setMode('respond')">Respond</div>
+          <div class="protocol" id="receive" onclick="setMode('receive')">Receive</div>
+        </div>
+        <div id="form">
+          <div class="instruction hideable">
+            <p>
+              This is a simple utility for trading secrets over public channels.
+            </p>
+            <p>
+              Rather than create a new secret in 1Password that is visible to
+              a bunch of people on the team and will live there forever, this
+              is useful for passing one-off secrets that can be instantly forgotten.
+              The server remembers nothing from one request to the next. There are
+              no cookies (aside from what a load balancer or gateway app like Teleport
+              might add).
+            </p>
+            <p>
+              The process has three steps:
+              <dl>
+                <dt>Request</dt><dd>The person who needs the secret information, the Requester, creates
+                  a request for it. The request has two parts: a <strong>public</strong>
+                  part and a <strong>private</strong>. You should download the <strong>private</strong>
+                  part of the request, as you'll need it later. The <strong>public</strong>
+                  part can be shared over Slack or email or any other public channel.</dd>
+                <dt>Respond</dt><dd>The person who <em>has</em> the secret, the Responder, can use this
+                  form to paste in the <strong>public</strong> request as well as the
+                  secret data. The server will respond with a <strong>response</strong>,
+                  which can be shared over public channels.</dd>
+                <dt>Receive</dt><dd>The Requester receives the <strong>response</strong>
+                  and pastes that into the form along with the <strong>private request</strong>
+                  that they created in the <strong>Request</strong> step. The server will
+                  decrypt and reply with the secret data.</dd>
+              </dl>
+            </p>
+            <p>
+              <strong>How does it work?</strong>
+            </p>
+            <p>
+              The server uses <em>Elliptic Curve Diffie-Hellman Key Exchange</em> to allow
+              the Requester and the Responder to agree individually on an encryption key
+              for the symmetrical AES256 encryption. Each party creates a secret key and
+              a public key. If you have one secret key, and the <em>other</em> public
+              key, you can generate a shared key. But no one that is not in possession
+              of either secret key can know what that shared key is, even if they have
+              both public keys.
+            </p>
+            <p>
+              <strong>How secure is it?</strong>
+            </p>
+            <p>
+              The steps all use NIST best-practice encryption tools. The server doesn't
+              remember any information from one request to the next, so it can't be hacked.
+              However, the process does involve sharing the secret key twice (once when
+              the server tells you what it is, and again when you tell the server). So
+              it's only as secure as the transmission line. Hopefully, this server is
+              secured via HTTPS with proper certificates. It can also be downloaded and
+              run locally. Because it is stateless, the Requester and the Responder don't
+              need to have access to the same server.
+            </p>
+            <p>
+              In fact, the server itself works as a command-line tool, and that's really
+              the best way of using it. This web server is only provided as a convenience
+              for sharing secrets with people for whom the console is awkward.
+            </p>
+
+          </div>
+          <div class="instruction hideable hidden request">
+            <p>This form will make a request for secret information. You will get
+               two request documents: a private one and a public one. You will need
+               to keep the private one safe and secret, but the public one can be
+               posted into Slack or any other public channel.</p>
+          </div>
+          <div class="instruction hideable hidden respond">
+            <p>This for is for responding to a request for secret information. You'll
+               need to paste in the request as well as the secret. You'll get back a
+               response with your secret encrypted, and the information the requester
+               needs to know to decrypt it (but that no one else will be able to use).
+            </p>
+          </div>
+          <div class="instruction hideable hidden receive">
+            <p>Once you get a response, you can paste the private request you saved
+               and the response document you received, and it will be decoded to the
+               secret information.</p>
+          </div>
+
+          <div class="response hideable hidden request" id="response-privateRequest">
+            <p><strong>Keep it secret! Keep it safe!</strong></p>
+            <p>Save this private request document somewhere. You will need it to
+               decode the response. But keep it a secret, because anyone who sees
+               this can also decode the response.</p>
+            <pre></pre>
+            <div class="response-buttons">
+              <a class="copy" href="#">Copy</a>
+              <a class="download" href="#">Download</a>
+            </div>
+          </div>
+          <div class="response hideable hidden request" id="response-publicRequest">
+            <p>This is the public request. The person who will respond with the
+               secret information will need this, but there is nothing in it
+               that can be used to decrypt the response.</p>
+            <p>This can be posted in Slack or sent in an email.</p>
+            <pre></pre>
+            <div class="response-buttons">
+              <a class="copy" href="#">Copy</a>
+              <a class="download" href="#">Download</a>
+            </div>
+          </div>
+          <div class="response hideable hidden respond" id="response-response">
+            <p>This is the response with the encrypted secret. It also has a public
+               key. Not to worry, though: this key cannot be used alone to decrypt
+               the secret. The requester will also need their private request key
+               for that.</p>
+            <pre></pre>
+            <div class="response-buttons">
+              <a class="copy" href="#">Copy</a>
+              <a class="download" href="#">Download</a>
+            </div>
+          </div>
+          <div class="response hideable hidden receive" id="response-secret">
+            <p><strong>Keep it secret! Keep it safe!</strong></p>
+            <p>This is the secret information that you requested. Make sure to do something responsible with it.</p>
+            <pre></pre>
+            <div class="response-buttons">
+              <a class="copy" href="#">Copy</a>
+              <a class="download" href="#">Download</a>
+            </div>
+          </div>
+
+          <div class="control hideable hidden request">
+            <label for="description">Description</label>
+            <textarea id="description" cols="60" rows="2"></textarea>
+          </div>
+          <div class="control hideable hidden respond">
+            <label for="publicRequest">Public Request</label>
+            <textarea id="publicRequest" cols="60" rows="8"></textarea>
+          </div>
+          <div class="control hideable hidden receive">
+            <label for="privateRequest">Private Request</label>
+            <textarea id="privateRequest" cols="60" rows="10"></textarea>
+          </div>
+          <div class="control hideable hidden respond receive">
+            <label class="hideable hidden respond" for="data">Data</label>
+            <label class="hideable hidden receive" for="data">Response</label>
+            <textarea id="data" cols="60" rows="10"></textarea>
+          </div>
+
+          <button type="button" class="button hideable hidden request" id="send-request" onclick="request()">Request</button>
+          <button type="button" class="button hideable hidden respond" id="send-respond" onclick="respond()">Respond</button>
+          <button type="button" class="button hideable hidden receive" id="send-receive" onclick="receive()">Receive</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      function setMode(mode) {
+        document.querySelectorAll(".hideable").forEach(h => h.classList.add('hidden'))
+        document.querySelectorAll(".control > textarea").forEach(c => c.value = "")
+        document.querySelectorAll(".hideable." + mode).forEach(h => h.classList.remove('hidden'))
+        document.querySelectorAll(".hideable.response").forEach(h => h.classList.add('hidden'))
+      }
+      function setResponse(selector, text) {
+        const area = document.getElementById('response-'+selector )
+        area.querySelector('pre').textContent = text
+        area.querySelector('.response-buttons a.copy').onclick = async function() {
+          try {
+            await navigator.clipboard.writeText(text)
+            alert("copied")
+          } catch (e) {
+            console.error(e)
+          }
+        }
+        const dl = area.querySelector('a.download')
+        dl.download = selector + '.txt'
+        dl.href = 'data:text/plain;base64,' + btoa(text)
+        area.classList.remove('hidden')
+      }
+      async function request() {
+        try {
+          const body = {
+            description: document.getElementById('description').value
+          }
+          const resp = await fetch('/request', {
+            method: 'POST',
+            body: JSON.stringify(body),
+          })
+          const reply = await resp.json()
+          setResponse('privateRequest', reply.PrivateRequest)
+          setResponse('publicRequest', reply.PublicRequest)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      async function respond() {
+          const body = {
+            publicRequest: document.getElementById('publicRequest').value,
+            data: document.getElementById('data').value,
+          }
+          try {
+            const resp = await fetch('/respond', {
+              method: 'POST',
+              body: JSON.stringify(body),
+            })
+            try {
+              const reply = await resp.text()
+              setResponse('response', reply)
+            } catch (e) {
+              console.error('Error fetching /respond text value', e)
+            }
+          } catch (e) {
+            console.error('Error fetching /respond', e)
+          }
+      }
+      async function receive() {
+        try {
+          const body = {
+            privateRequest: document.getElementById('privateRequest').value,
+            data: document.getElementById('data').value,
+          }
+          const resp = await fetch('/receive', {
+            method: 'POST',
+            body: JSON.stringify(body),
+          })
+          const reply = await resp.text()
+          setResponse('secret', reply)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    </script>
+  </body>
+</html>
