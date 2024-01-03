@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Ephemeral</title>
+<style type="text/css">
+* {
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 10pt;
+}
+.hidden {
+  display: none;
+}
+body {
+  background-color: #EEEEEE;
+}
+#container {
+  max-width: 900px;
+  margin: auto;
+}
+h1 {
+  font-size: large;
+  margin-top: 1ex;
+  margin-bottom: 1ex;
+  margin-left: 13px;
+  text-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+}
+#iface {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+  padding: 13px;
+  display: flex;
+}
+#menu {
+  min-width: 10%;
+  display: flex-row;
+}
+#menu .protocol {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 1em;
+  padding-right: 1em;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+  background-color: white;
+  font-weight: bold;
+}
+#menu .protocol:hover {
+  box-shadow: 0 5px 5px #BBBBBB, 0 10px 20px #EEEEEE;
+  color: #444444;
+}
+#menu .protocol:active {
+  box-shadow: 0 0 20px #EEEEEE;
+  background-color: #EEFFEE;
+}
+#form {
+  display: flex-row;
+  margin-left: 5%;
+  border: 1px solid #444444;
+  border-radius: 10px;
+  padding: 13px;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+}
+label {
+  font-weight: bold;
+  margin-top: 2ex;
+  display: block;
+}
+textarea {
+  width: calc(100% - 16px);
+  padding: 8px;
+  font-family: monospace;
+}
+button {
+  padding: 1ex 1em;
+  background-color: #3F51B5;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #BBBBBB, 0 5px 20px #EEEEEE;
+  margin-top: 2ex;
+}
+button:hover {
+  box-shadow: 0 5px 5px #BBBBBB, 0 10px 20px #EEEEEE;
+  background-color: #03A9F4;
+}
+button:active {
+  box-shadow: 0 0 20px #EEEEEE;
+  background-color: #03A9F4;
+}
+.response {
+  font-size: small;
+  border: 1px solid #BBBBBB;
+  border-radius: 5px;
+  padding: 8px;
+  margin-top: 2ex;
+}
+pre {
+  margin-top: 2ex;
+  margin-bottom: 2ex;
+  padding: 2ex;
+  width: calc(100% - 4ex);
+  background-color: #EEEEEE;
+  color: #444444;
+  font-family: monospace;
+}
+.response-buttons a {
+  font-size: smaller;
+  color: #3F51B5;
+}
+.response-buttons a:visited {
+  font-size: smaller;
+  color: #3F51B5;
+}
+.response-buttons a:active {
+  font-size: smaller;
+  color: #3F51B5;
+}
+.response-buttons a:hover {
+  font-size: smaller;
+  color: #03A9F4;
+}
+
+</style>
+  </head>
+  <body>
+    <div id="container">
+      <h1 id="title">Ephemeral Error</h1>
+      <div id="iface">
+        An error has occurred.
+      </div>
+    </div>
+  </body>
+</html>
