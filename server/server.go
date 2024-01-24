@@ -188,8 +188,8 @@ func ListenAndServe(addr string) error {
 	http.Handle(`/request`, handlerFunc(request))
 	http.Handle(`/respond`, handlerFunc(respond))
 	http.Handle(`/receive`, handlerFunc(receive))
-	http.Handle(`/`, handlerFunc(index))
-	http.Handle(`/short`, http.HandlerFunc(short))
+	http.Handle(`/full`, handlerFunc(index))
+	http.Handle(`/`, http.HandlerFunc(short))
 	err := http.ListenAndServe(addr, nil)
 	if err == http.ErrServerClosed {
 		return nil

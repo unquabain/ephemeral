@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta property="og:title" content="Ephemeral Secret Request"/>
+    <meta property="og:description" content="Someone has requested secret information from you. Use this form to respond with secret data over public channels. Completely stateless and secure."/>
+    <meta property="og:site_name" content="Ben Forsberg's Cloud Wonderland"/>
+
+
     <meta charset="utf-8"/>
     <title>Ephemeral</title>
 <style type="text/css">
@@ -78,10 +83,14 @@ code {
       <div id="iface">
         <div class="instruction">
           <form method="POST" action="/short">
+            <p>Someone you know has asked you for some secret data. Paste this data in the form below,
+               and hit the "Encrypt" button to get a block of encrypted text. Only the person who
+               sent you this link can decrypt it. You can copy it and send it back along the same
+               channel from which you got this link. (email, Slack, Teams, etc)</p>
             <p>Paste the response here:</p>
             <input type="hidden" name="public" value="{{ .public }}">
             <textarea cols="60" rows="20" name="data"></textarea>
-            <button type="submit">Receive</button>
+            <button type="submit">Encrypt</button>
           </form>
         </div>
       </div>

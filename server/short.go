@@ -64,7 +64,7 @@ func shortError(w http.ResponseWriter, r *http.Request, err error, msg string) {
 
 func returnURL(request *http.Request) string {
 	var ret url.URL
-	ret.Scheme = request.URL.Scheme
+	ret.Scheme = `https`
 	ret.Host = request.Host
 	ret.User = request.URL.User
 	ret.Path = request.URL.Path
@@ -165,6 +165,7 @@ func shortReceive(w http.ResponseWriter, r *http.Request, dict map[string]string
 	}
 
 	w.Header().Add(`Content-Type`, `text/plain`)
+	w.Header().Add(`Content-Disposition`, `attachment; filename="secret.txt"`)
 	if _, err := w.Write(secret); err != nil {
 		shortError(w, r, err, `could not write secret`)
 		return
