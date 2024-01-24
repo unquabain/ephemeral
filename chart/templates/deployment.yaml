@@ -1,0 +1,26 @@
+{{ $name := include "name" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name | quote }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ $name | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name | quote }}
+    spec:
+      {{ if .Values.image.secretName -}}
+      imagePullSecrets:
+        - name: {{ .Values.image.secretName | quote }}
+      {{ end -}}
+      containers:
+      - image: {{ include "image" .Values.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        name: {{ .Chart.Name | lower | quote }}
+        ports:
+        - containerPort: {{ .Values.internalPort | quote }}
+          protocol: TCP
+      restartPolicy: Always

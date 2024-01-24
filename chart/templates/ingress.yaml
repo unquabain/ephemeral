@@ -1,0 +1,32 @@
+{{ $name := include "name" . -}}
+{{ $port := .Values.port -}}
+{{ with .Values.net -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    {{ if .ssl -}}
+    cert-manager.io/cluster-issuer: {{ .ssl.clusterIssuer | quote }}
+    {{ end -}}
+    kubernetes.io/ingress.class: {{ .ingressClass | quote }}
+  name: {{ $name | quote }}
+spec:
+  ingressClassName: {{ .ingressClass | quote }}
+  rules:
+  - host: {{ .host | quote }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ $name | quote }}
+            port:
+              number: {{ $port | quote }}
+        path: {{ .path | quote }}
+        pathType: Prefix
+  {{ if .ssl -}}
+  tls:
+  - hosts:
+    - {{ .host | quote }}
+    secretName: {{ $name | quote }}
+  {{ end -}}
+{{ end -}}

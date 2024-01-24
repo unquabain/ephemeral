@@ -1,0 +1,6 @@
+apiVersion: "3"
+version: 0.0.1
+appVersion: 0.0.1
+name: Ephemeral
+description: |
+  A web service for sending encrypted secrets over public channels using Diffie-Hellman Key Exchange and zero shared secrets and zero state.

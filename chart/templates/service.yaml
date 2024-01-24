@@ -1,0 +1,14 @@
+{{ $name := include "name" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name | quote }}
+spec:
+  ports:
+  - port: {{ .Values.port | quote }}
+    protocol: TCP
+    targetPort: {{ .Values.internalPort | quote }}
+  selector:
+    app: {{ $name | quote }}
+  sessionAffinity: None
+  type: ClusterIP

@@ -1,0 +1,41 @@
+# The port that the app will be served on the Internet.
+port: "80"
+
+# The port that the server will be served on within your cluster.
+# Don't change this in this version of the chart.
+internalPort: "8989"
+
+# Information about the OCI container
+image:
+  # URL of the registry or username if on DockerHub.
+  registry: "unquabain"
+
+  # Name of the image.
+  repository: "ephemeral"
+
+  # Version of the image.
+  tag: "latest"
+
+  # Image Pull Policy. Use "Always" if the tag is "latest"
+  pullPolicy: "Always"
+
+  # If serving from a private registry, put the name of the secret
+  # that has the Docker login.
+  secretName: ""
+
+# Information about the host.
+net:
+  # The domain that the app will be served at.
+  host: "ephemeral.4zb.org"
+
+  # If you want to mount the app under a path.
+  path: "/"
+
+  # The name of the actual implementation of the ingress controller being used.
+  ingressClass: "nginx"
+
+  # Comment this out if you're not using SSL.
+  ssl:
+    # The name of the clusterissuer resource that will manage SSL certificates.
+    clusterIssuer: "letsencrypt-prod"
+
