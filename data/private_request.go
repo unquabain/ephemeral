@@ -6,12 +6,16 @@ import (
 	"github.com/google/uuid"
 )
 
+// PrivateRequest contains the data necessary to make a full request.
 type PrivateRequest struct {
 	ID          uuid.UUID
 	Key         PrivateKey
 	Description string
 }
 
+// Public returns the corresponding PublicRequest object, which
+// has the same data, except for it has the PublicKey that corresponds
+// to this PrivateRequest's PrivateKey.
 func (r PrivateRequest) Public() PublicRequest {
 	return PublicRequest{
 		ID:          r.ID,
@@ -20,6 +24,8 @@ func (r PrivateRequest) Public() PublicRequest {
 	}
 }
 
+// Decode extracts the PublicKey from the response and decrypts the
+// response payload.
 func (r *PrivateRequest) Decode(response Response) ([]byte, error) {
 	cipher, err := cipherFromKeys(r.Key, response.Key)
 	if err != nil {
@@ -32,6 +38,7 @@ func (r *PrivateRequest) Decode(response Response) ([]byte, error) {
 	return plaintext, nil
 }
 
+// NewRequest creates a new request with a random private key.
 func NewRequest(description string) (PrivateRequest, error) {
 	var (
 		r PrivateRequest

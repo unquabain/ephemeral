@@ -6,12 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// PublicRequest contains the information to be packed in an envelope for the
+// public part of the request, which may travel over public channels such as Slack.
 type PublicRequest struct {
 	ID          uuid.UUID
 	Key         PublicKey
 	Description string
 }
 
+// Encode creates a complementary key, encrypts the message, and returns
+// a response object that can be decrypted with the corresponding private key
+// that generated the public request.
 func (r PublicRequest) Encode(data []byte) (Response, error) {
 	privateKey, err := NewPrivateKey(r.Key.Curve())
 	if err != nil {

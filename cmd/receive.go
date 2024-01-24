@@ -1,6 +1,5 @@
 /*
-Copyright © 2023 Mobile Technologies Inc. <connect-support@mtigs.com>
-All Rights Reserved
+Package cmd implements the subcommands that the executable understands.
 */
 package cmd
 

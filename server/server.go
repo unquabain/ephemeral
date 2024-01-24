@@ -1,7 +1,9 @@
 package server
 
 import (
+	// The embed import is necessary for the go:embed special comment.
 	_ "embed"
+
 	"encoding/json"
 	"fmt"
 	"io"
@@ -184,6 +186,9 @@ func index(_ getBody) (response, *webError) {
 	return htmlResponse(indexHTML), nil
 }
 
+// ListenAndServe runs the server. It blocks until the server is shut down.
+// If the server was shut down due to a CTRL+C, null is returned as the error, unlike the underlying
+// http.Server implementation.
 func ListenAndServe(addr string) error {
 	http.Handle(`/request`, handlerFunc(request))
 	http.Handle(`/respond`, handlerFunc(respond))

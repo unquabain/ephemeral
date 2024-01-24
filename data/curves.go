@@ -7,15 +7,24 @@ import (
 	"github.com/apex/log"
 )
 
+// Curve is an enum for selecting an elliptic curve.
 type Curve uint8
 
 const (
+	// P256 is the P256 elliptic curve
 	P256 Curve = iota
+
+	// P384 is the P256 elliptic curve
 	P384
+
+	// P521 is the P256 elliptic curve
 	P521
+
+	// InvalidCurve is a constant indicating an error choosing a random curve.
 	InvalidCurve
 )
 
+// RandomCurve selects a supported, secure elliptic curve at random.
 func RandomCurve() ecdh.Curve {
 	b := make([]byte, 1)
 	if _, err := rand.Read(b); err != nil {

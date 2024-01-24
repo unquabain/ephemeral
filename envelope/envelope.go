@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+// Envelope is an ASCII-armored format for passing keys and encrypted data over
+// the wire. It looks a bit like PEM, but uses Go's internal gob format.
 type Envelope struct {
 	Name     string
 	Prelude  string
@@ -93,6 +95,8 @@ func wrap(data []byte) ([]byte, error) {
 	return out.Bytes(), nil
 }
 
+// MarshalText implements encoding.TextMarshaler, and performs the
+// binary-to-text conversion of the envelope.
 func (e Envelope) MarshalText() ([]byte, error) {
 	buff := new(bytes.Buffer)
 	fmt.Fprintln(buff, e.Prelude)
@@ -113,6 +117,8 @@ func (e Envelope) MarshalText() ([]byte, error) {
 	return buff.Bytes(), nil
 }
 
+// UnmarshalText implements encoding.TextUnmarshaler, and performs the text-to-binary
+// conversion of the envelope.
 func (e *Envelope) UnmarshalText(data []byte) error {
 	parts := strings.Split(string(data), `-----`)
 	if l := len(parts); l != 5 {
@@ -139,6 +145,7 @@ func (e errorReader) Read(_ []byte) (int, error) {
 	return 0, e.error
 }
 
+// Reader returns an io.Reader to facilitate writing the Envelope to data streams.
 func (e Envelope) Reader() io.Reader {
 	if data, err := e.MarshalText(); err != nil {
 		return errorReader{err}
@@ -147,6 +154,7 @@ func (e Envelope) Reader() io.Reader {
 	}
 }
 
+// ReadFrom reads data from an io.Reader to faciltate reading from data streams.
 func (e *Envelope) ReadFrom(r io.Reader) (int64, error) {
 	buff := new(bytes.Buffer)
 	n, err := io.Copy(buff, r)
@@ -156,6 +164,7 @@ func (e *Envelope) ReadFrom(r io.Reader) (int64, error) {
 	return int64(n), e.UnmarshalText(buff.Bytes())
 }
 
+// DataReader returns an io.Reader that reads just the binary data field of the Envelope.
 func (e Envelope) DataReader() io.Reader {
 	return bytes.NewReader(e.Data)
 }
@@ -169,14 +178,19 @@ func (b buffWriter) Write(data []byte) (int, error) {
 	return n, err
 }
 
+// DataWriter implements io.Writer, and writes the stream to the Envelope's Data field.
 func (e *Envelope) DataWriter() io.Writer {
 	return buffWriter{e}
 }
 
+// Stuff serializes the content and puts it in the Data member.
 func (e *Envelope) Stuff(content any) error {
 	return gob.NewEncoder(e.DataWriter()).Encode(content)
 }
 
+// Open deserializes the data in the Data member, putting it into target, which must be
+// a pointer to a compatible type. It is for the caller to use the informational fields
+// of the Envelope to determine the correct type for the target member.
 func (e *Envelope) Open(target any) error {
 	return gob.NewDecoder(e.DataReader()).Decode(target)
 }

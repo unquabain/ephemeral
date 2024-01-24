@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	// embed needs to be imported to enable the go:embed special compiler comment.
 	_ "embed"
 	"net/url"
 
